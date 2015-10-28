@@ -1,3 +1,0 @@
-// the configured options and settings for Tutorial
-#define rain_VERSION_MAJOR @rain_VERSION_MAJOR@
-#define rain_VERSION_MINOR @rain_VERSION_MINOR@
