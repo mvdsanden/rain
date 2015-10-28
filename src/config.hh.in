@@ -1,0 +1,22 @@
+#ifndef __INC_RAIN_CONFIG_HH__
+#define __INC_RAIN_CONFIG_HH__
+
+namespace rain {
+  
+  class Config {
+  public:
+    
+    enum {
+
+      VERSION_MAJOR = @rain_VERSION_MAJOR@,
+      VERSION_MINOR = @rain_VERSION_MINOR@,
+    
+    };
+
+  private:
+
+    static char const *s_versionString = "@rain_VERSION_MAJOR@.@rain_VERSION_MINOR@";
+    
+  };
+  
+}

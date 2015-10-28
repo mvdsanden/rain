@@ -1,0 +1,7 @@
+add_executable(test_singleton test_singleton.cc)
+add_executable(test_task test_task.cc)
+add_executable(test_taskrunner test_taskrunner.cc)
+add_executable(test_iostatemonitor test_iostatemonitor.cc)
+
+target_link_libraries(test_taskrunner core)
+target_link_libraries(test_iostatemonitor io exceptions)

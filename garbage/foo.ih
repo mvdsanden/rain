@@ -1,0 +1,18 @@
+#ifndef __INC_RAIN_FOO_IH__
+#define __INC_RAIN_FOO_IH__
+
+#include "foo.h"
+
+namespace rain {
+
+  struct Foo::implementation {
+
+    implementation(int value);
+    
+    int value;
+    
+  };
+
+}
+
+#endif // __INC_RAIN_FOO_IH__
