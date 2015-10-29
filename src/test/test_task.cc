@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "core/task.hh"
+#include "core/taskcompletionhandler.hh"
 
 rain::core::FunTask t([](){
     std::cout << "Task run!\n";
@@ -15,6 +16,13 @@ rain::core::FunTask t([](){
 
 int main()
 {
+  rain::core::FunTaskCompletionHandler completed([](rain::core::Task &task, rain::core::TaskCompletionHandler::TaskState state)
+						 {
+						   std::cout << "Task completed: " << state << ".\n";
+						 });
+  
+  t.setCompletionHandler(&completed);
+  
   std::thread th([](){ t.run(); });
 
   std::cout << "Waiting for t...\n";

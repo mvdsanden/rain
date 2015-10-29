@@ -14,7 +14,7 @@ namespace rain {
 	public OutputHandler
     {
     public:
-
+      
     };
     
   }

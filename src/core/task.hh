@@ -8,6 +8,8 @@
 namespace rain {
   namespace core {
 
+    class TaskCompletionHandler;
+    
     /**
      *  TODO: figure out life time!
      */
@@ -26,93 +28,55 @@ namespace rain {
       
     public:
 
-      Task()
-	: d_state(SCHEDULED)
-      {
-      }
+      Task();
 
-      ~Task()
-      {
-	//std::unique_lock<std::mutex> lk(d_mutex);
-	//if (d_state < DONE) {
-	//  throw std::runtime_error("task deleted before it was finished");
-	//}
-      }
+      ~Task();
       
-      void run()
-      {
-	std::unique_lock<std::mutex> lk(d_mutex);
+      void run();
 
-	if (d_state != SCHEDULED) {
-	  return;
-	}
-	
-	d_state = RUNNING;
+      void reset();
 
-	lk.unlock();
+      /**
+       *  This cancels the task.
+       */
+      void cancel();
 
-	(*this)();
+      /**
+       *  \return true when the task is running or expected to execute in the future.
+       */
+      bool alive() const;
 
-	lk.lock();
-
-	if (d_state == RUNNING) {
-	  d_state = SCHEDULED;
-	}
-
-	d_cond.notify_all();
-      }
-
-      void reset()
-      {
-	std::unique_lock<std::mutex> lk(d_mutex);
-
-	if (d_state <= RUNNING) {
-	  return;
-	}
-
-	d_state = SCHEDULED;
-      }
+      /**
+       *  \return true when task was canceled.
+       */
+      bool canceled() const;
       
-      void cancel()
-      {
-	std::unique_lock<std::mutex> lk(d_mutex);
+      /**
+       *  Waits until the task is done or canceled.
+       */
+      void wait();
 
-	while (d_state == RUNNING) {
-	  d_cond.wait(lk);
-	}
-
-	d_state = CANCELED;	
-	d_cond.notify_all();
-      }
+      /**
+       *  Sets a handler that is called on completion of the task (by being done or canceled).
+       */
+      void setCompletionHandler(TaskCompletionHandler *handler);
       
-      bool alive() const
-      {
-	return d_state <= RUNNING;
-      }
-      
-      void wait()
-      {
-	std::unique_lock<std::mutex> lk(d_mutex);
-	while (d_state < DONE) {
-	  d_cond.wait(lk);
-	}
-      }
-
     protected:
 
-      void done()
-      {
-	std::unique_lock<std::mutex> lk(d_mutex);
-	d_state = DONE;
-	d_cond.notify_all();
-      }
-
+      /**
+       *  Should be called by the implementing task to signal
+       *  that the task is done.
+       */
+      void done();
+      
     private:
 
       State d_state;
       
       std::mutex d_mutex;
       std::condition_variable d_cond;
+
+      TaskCompletionHandler *d_completionHandler;
       
     };
 
